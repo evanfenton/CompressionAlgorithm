@@ -11,7 +11,8 @@ struct byte_freq {
 class BTreeNode{
 	
 	public:
-	BTreeNode(int f);
+	BTreeNode();
+	BTreeNode(byte_freq d, BTreeNode* z, BTreeNode* o);
 	const BTreeNode* get_zero();
 	const BTreeNode* get_one();
 	byte_freq get_data();

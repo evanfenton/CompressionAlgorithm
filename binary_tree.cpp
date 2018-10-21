@@ -4,12 +4,20 @@
 #include <math.h>
 
 
-BTreeNode::BTreeNode(int f){
+BTreeNode::BTreeNode(){
 	
 	zero = NULL;
 	one = NULL;
 	node_data.data = 0xFF;
-	node_data.freq = f;
+	node_data.freq = 0;
+	
+}
+
+BTreeNode::BTreeNode(byte_freq d, BTreeNode* z, BTreeNode* o){
+	
+	zero = z;
+	one = o;
+	node_data = d;
 	
 }
 
@@ -41,7 +49,7 @@ void BTreeNode::set_one(BTreeNode* o){
 
 BinaryTree::BinaryTree(int data_size){
 	
-	root = new BTreeNode(data_size);
+	/*root = new BTreeNode(data_size);
 	
 	int nxt = findNextPwrOf2(data_size);
 	
@@ -59,7 +67,7 @@ BinaryTree::BinaryTree(int data_size){
 		
 		root->set_zero(new BTreeNode(nxt));
 		root->set_one(new BTreeNode(data_size-nxt));
-	}
+	}*/
 	
 }
 

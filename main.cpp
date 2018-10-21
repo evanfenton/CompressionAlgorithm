@@ -62,9 +62,60 @@ int byte_compress( byte* data_ptr, int data_size ){
 	
 	// sort the data by frequency and display 
 	insertionSort(temp_ptr, temp_size);
-	display(temp_ptr, temp_size);
+	//display(temp_ptr, temp_size);
 	
-	// compress the bytes
+	
+	
+	// create huffman tree
+	int maxNode = 0, min1 = 0, min2 = 1, tmpSz = temp_size;
+	BTreeNode** nodes = new BTreeNode*[tmpSz];
+	BTreeNode* new_node;
+	
+	for(int i = 0; i < tmpSz; i++){
+		nodes[i] = new BTreeNode(temp_ptr[i], NULL, NULL);
+	}
+	
+	maxNode = temp_ptr[tmpSz-1].freq;
+	while(maxNode != data_size){
+		
+		min1 = 0;
+		min2 = 1;
+		for(int i = 2; i < tmpSz; i++){
+			
+			int freq = nodes[i]->get_data().freq , 
+			min1_freq = nodes[min1]->get_data().freq , 
+			min2_freq = nodes[min2]->get_data().freq;
+			
+			if( (freq < min1_freq) ||
+				(freq == min1_freq && nodes[min1]->get_zero() != NULL)){
+				min1 = i;
+			}
+			else if((freq < min2_freq) ||
+					(freq == min2_freq && nodes[min1]->get_zero() != NULL)){
+				min2 = i;
+			}
+		}
+		
+		if(min2 < min1){
+			int tmp = min1;
+			min1 = min2;
+			min2 = tmp;
+		}
+		
+		byte_freq nd = {0xFF, (nodes[min1]->get_data().freq) + (nodes[min2]->get_data().freq)};
+		
+		new_node = new BTreeNode(nd, nodes[min1], nodes[min2]);
+		
+		nodes[min2] = new_node;
+		
+		nodes++;
+		tmpSz--;
+		
+		if(new_node->get_data().freq > maxNode){
+			maxNode = new_node->get_data().freq;
+		}
+		
+	}
 	
 	
 	
@@ -78,12 +129,12 @@ void insertionSort(byte_freq* bf_ptr, int bf_size)
 	
 	for(int i=1, j; i< bf_size; i++){
 		
-		int temp = bf_ptr[i].freq;
+		byte_freq temp = bf_ptr[i];
 		
-		for(j=i; j>0 && temp<bf_ptr[j-1].freq; j--){
-			bf_ptr[j].freq = bf_ptr[j-1].freq;
+		for(j=i; j>0 && temp.freq < bf_ptr[j-1].freq; j--){
+			bf_ptr[j] = bf_ptr[j-1];
 		}
-		bf_ptr[j].freq = temp;
+		bf_ptr[j] = temp;
 	}
 	
 }
