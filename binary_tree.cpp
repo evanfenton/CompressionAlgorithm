@@ -1,7 +1,7 @@
 // file: binary_tree.cpp
 
 #include "binary_tree.h"
-#include <math.h>
+#include <stdio.h>
 
 
 BTreeNode::BTreeNode(){
@@ -21,11 +21,11 @@ BTreeNode::BTreeNode(byte_freq d, BTreeNode* z, BTreeNode* o){
 	
 }
 
-const BTreeNode* BTreeNode::get_zero(){
+BTreeNode* BTreeNode::get_zero(){
 	return zero;
 }
 	
-const BTreeNode* BTreeNode::get_one(){
+BTreeNode* BTreeNode::get_one(){
 	return one;
 }
 
@@ -47,63 +47,63 @@ void BTreeNode::set_one(BTreeNode* o){
 	
 
 
-BinaryTree::BinaryTree(int data_size){
+BinaryTree::BinaryTree(BTreeNode* r, int size){
 	
-	/*root = new BTreeNode(data_size);
-	
-	int nxt = findNextPwrOf2(data_size);
-	
-	if(nxt == data_size){
-		
-		root->set_zero(new BTreeNode(nxt/2));
-		root->set_one(new BTreeNode(nxt/2));
-	}
-	else if( data_size-nxt == findNextPwrOf2(data_size-nxt) ){
-		
-		root->set_zero(new BTreeNode(data_size-nxt));
-		root->set_one(new BTreeNode(nxt));
-	}
-	else{
-		
-		root->set_zero(new BTreeNode(nxt));
-		root->set_one(new BTreeNode(data_size-nxt));
-	}*/
-	
+	root = r;
+	huffCodes = new huffman_code[size];
+	huffIndex = 0;
 }
-
-
-
-
 
 BinaryTree::~BinaryTree(){
 	
-	
-}
-	
-void BinaryTree::insert(byte_freq d){
-	
-	
+	deleteTree(root);
+	delete [] huffCodes;
 }
 
 
-int BinaryTree::findNextPwrOf2(int num){
+
+void BinaryTree::traverse(){
 	
-	int i = 0, maxPwr = 1;
-	while(pow(2,i) <= num){
-		
-		if(pow(2,i) > maxPwr){ 
-			maxPwr = pow(2,i); 
-		}
-		i++;
+	recursive(root, 0, 0);
+}
+
+
+void BinaryTree::recursive(BTreeNode* node, byte current, int length){
+	
+	if(node->get_zero() != NULL){
+		recursive(node->get_zero(), current, length+1);
 	}
 	
-	return maxPwr;
+	if(node->get_one() != NULL){
+		recursive(node->get_one(), ((current<<1)|0x01), length+1);
+	}
+	else{
+		
+		printf("DATA: %d\nBIT CODE: 0x%02X\nLENGTH OF CODE: %d\n\n",
+		node->get_data().data, current, length);
+		
+		huffCodes[huffIndex].data = node->get_data().data;
+		huffCodes[huffIndex].bit_code = current;
+		huffCodes[huffIndex].bit_length = length;
+	}
 }
 
 
-void BinaryTree::deleteTree(const BTreeNode* node){
+void BinaryTree::deleteTree(BTreeNode* node){
 	
+	BTreeNode* zeroChild = node->get_zero();
+	BTreeNode* oneChild = node->get_one();
 	
+	if(zeroChild != NULL){
+		deleteTree(zeroChild);
+	}
+	
+	if(oneChild != NULL){
+		deleteTree(oneChild);
+	}
+	else{
+		delete node;
+	}
 }
 
 

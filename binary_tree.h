@@ -8,13 +8,19 @@ struct byte_freq {
 	int freq;
 };
 
+struct huffman_code {
+	
+	byte data, bit_code;
+	int bit_length;
+};
+
 class BTreeNode{
 	
 	public:
 	BTreeNode();
 	BTreeNode(byte_freq d, BTreeNode* z, BTreeNode* o);
-	const BTreeNode* get_zero();
-	const BTreeNode* get_one();
+	BTreeNode* get_zero();
+	BTreeNode* get_one();
 	byte_freq get_data();
 	void set_data(byte_freq d);
 	
@@ -30,15 +36,21 @@ class BTreeNode{
 class BinaryTree {
 	
 	public:
-	BinaryTree(int data_size);
+	BinaryTree(BTreeNode* r, int size);
 	~BinaryTree();
 	
-	void insert(byte_freq d);
+	void traverse();
+	
+	void recursive(BTreeNode* node, byte current, int length);
 	
 	private:
 	BTreeNode* root;
-	void deleteTree(const BTreeNode* node);
+	void deleteTree(BTreeNode* node);
 	int findNextPwrOf2(int num);
+	
+	int huffIndex;
+	
+	huffman_code* huffCodes;
 	
 };
 

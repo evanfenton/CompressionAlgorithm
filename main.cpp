@@ -64,16 +64,23 @@ int byte_compress( byte* data_ptr, int data_size ){
 	insertionSort(temp_ptr, temp_size);
 	//display(temp_ptr, temp_size);
 	
-	
+	cout << "\n1";
 	
 	// create huffman tree
 	int maxNode = 0, min1 = 0, min2 = 1, tmpSz = temp_size;
 	BTreeNode** nodes = new BTreeNode*[tmpSz];
+	BTreeNode** delete_nodes = nodes;
 	BTreeNode* new_node;
 	
+	cout << "\n2";
+	
+	#if 1
 	for(int i = 0; i < tmpSz; i++){
 		nodes[i] = new BTreeNode(temp_ptr[i], NULL, NULL);
 	}
+	#endif
+	
+	cout << "\n3";
 	
 	maxNode = temp_ptr[tmpSz-1].freq;
 	while(maxNode != data_size){
@@ -107,7 +114,11 @@ int byte_compress( byte* data_ptr, int data_size ){
 		new_node = new BTreeNode(nd, nodes[min1], nodes[min2]);
 		
 		nodes[min2] = new_node;
+		nodes[min1] = NULL;				// ACTUALLY DELETE MEMORY!!
 		
+		for(int i = min1; i > 0; i++){
+			nodes[i] = nodes[i-1];
+		}
 		nodes++;
 		tmpSz--;
 		
@@ -117,7 +128,13 @@ int byte_compress( byte* data_ptr, int data_size ){
 		
 	}
 	
+	cout << "\n4";
 	
+	BinaryTree bin_tree(*nodes, temp_size);
+	
+	bin_tree.traverse();
+	
+	//delete [] delete_nodes;
 	
 	return data_size;
 	
