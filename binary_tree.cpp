@@ -1,51 +1,25 @@
 // file: binary_tree.cpp
 
 #include "binary_tree.h"
-#include <stdio.h>
-
-
-BTreeNode::BTreeNode(){
-	
-	zero = NULL;
-	one = NULL;
-	node_data.data = 0xFF;
-	node_data.freq = 0;
-	
-}
 
 BTreeNode::BTreeNode(byte_freq d, BTreeNode* z, BTreeNode* o){
 	
 	zero = z;
 	one = o;
 	node_data = d;
-	
 }
 
-BTreeNode* BTreeNode::get_zero(){
+BTreeNode* BTreeNode::getZero(){
 	return zero;
 }
 	
-BTreeNode* BTreeNode::get_one(){
+BTreeNode* BTreeNode::getOne(){
 	return one;
 }
 
-byte_freq BTreeNode::get_data(){
+byte_freq BTreeNode::getData(){
 	return node_data;
 }
-
-void BTreeNode::set_data(byte_freq d){
-	node_data = d;
-}
-
-void BTreeNode::set_zero(BTreeNode* z){
-	zero = z;
-}
-
-void BTreeNode::set_one(BTreeNode* o){
-	one = o;
-}
-	
-
 
 BinaryTree::BinaryTree(BTreeNode* r, int size){
 	
@@ -60,39 +34,33 @@ BinaryTree::~BinaryTree(){
 	delete [] huffCodes;
 }
 
-
-
 void BinaryTree::traverse(){
 	
-	recursive(root, 0, 0);
+	getNewBitPattern(root, 0, 0);
 }
 
-
-void BinaryTree::recursive(BTreeNode* node, byte current, int length){
+void BinaryTree::getNewBitPattern(BTreeNode* node, byte current, int length){
 	
-	if(node->get_zero() != NULL){
-		recursive(node->get_zero(), current, length+1);
+	// NODES WILL ALWAYS HAVE NO CHILDREN OR TWO
+	if(node->getZero() != NULL){
+		getNewBitPattern(node->getZero(), (current<<1), length+1);
 	}
 	
-	if(node->get_one() != NULL){
-		recursive(node->get_one(), ((current<<1)|0x01), length+1);
+	if(node->getOne() != NULL){
+		getNewBitPattern(node->getOne(), ((current<<1)|0x01), length+1);
 	}
 	else{
-		
-		printf("DATA: %d\nBIT CODE: 0x%02X\nLENGTH OF CODE: %d\n\n",
-		node->get_data().data, current, length);
-		
-		huffCodes[huffIndex].data = node->get_data().data;
+		huffCodes[huffIndex].bf = node->getData();
 		huffCodes[huffIndex].bit_code = current;
 		huffCodes[huffIndex].bit_length = length;
+		huffIndex++;
 	}
 }
-
 
 void BinaryTree::deleteTree(BTreeNode* node){
 	
-	BTreeNode* zeroChild = node->get_zero();
-	BTreeNode* oneChild = node->get_one();
+	BTreeNode* zeroChild = node->getZero();
+	BTreeNode* oneChild = node->getOne();
 	
 	if(zeroChild != NULL){
 		deleteTree(zeroChild);
@@ -106,13 +74,34 @@ void BinaryTree::deleteTree(BTreeNode* node){
 	}
 }
 
+huffman_code BinaryTree::getHuffcode(byte data){
+	
+	for(int i = 0; i < huffIndex; i++){
+		
+		if(data == huffCodes[i].bf.data){
+			return huffCodes[i];
+		}
+	}
+}
 
+int BinaryTree::getNewsize(){
+	
+	int sum = 0;
+	
+	for(int i = 0; i < huffIndex; i++){
+		sum += (huffCodes[i].bit_length * huffCodes[i].bf.freq);
+	}
+	
+	new_bitlength = sum;
+	
+	while(sum % 8 != 0) sum++;
+	
+	return sum/8;
+}
 
-
-
-
-
-
+int BinaryTree::getNewBitlength(){
+	return new_bitlength;
+}
 
 
 

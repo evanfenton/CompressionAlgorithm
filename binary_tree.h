@@ -1,6 +1,8 @@
 // file: binary_tree.h
 
-typedef unsigned short int byte;
+#include <stdio.h>
+
+typedef unsigned char byte;
 
 struct byte_freq {
 	
@@ -10,27 +12,23 @@ struct byte_freq {
 
 struct huffman_code {
 	
-	byte data, bit_code;
+	byte_freq bf;
+	byte bit_code;
 	int bit_length;
 };
 
 class BTreeNode{
 	
 	public:
-	BTreeNode();
 	BTreeNode(byte_freq d, BTreeNode* z, BTreeNode* o);
-	BTreeNode* get_zero();
-	BTreeNode* get_one();
-	byte_freq get_data();
-	void set_data(byte_freq d);
-	
-	void set_zero(BTreeNode* z);
-	void set_one(BTreeNode* o);
+	BTreeNode* getZero();
+	BTreeNode* getOne();
+	byte_freq getData();
 	
 	private:
 	byte_freq node_data;
-	BTreeNode* zero; // left node
-	BTreeNode* one; // right node
+	BTreeNode* zero; 	// left node
+	BTreeNode* one; 	// right node
 };
 
 class BinaryTree {
@@ -39,18 +37,22 @@ class BinaryTree {
 	BinaryTree(BTreeNode* r, int size);
 	~BinaryTree();
 	
+	huffman_code getHuffcode(byte data);
+	
+	int getNewsize();
+	int getNewBitlength();
+	
 	void traverse();
 	
-	void recursive(BTreeNode* node, byte current, int length);
+	// recursive function to get new bit patterns
+	void getNewBitPattern(BTreeNode* node, byte current, int length);
 	
 	private:
 	BTreeNode* root;
-	void deleteTree(BTreeNode* node);
-	int findNextPwrOf2(int num);
-	
+	int new_bitlength;
 	int huffIndex;
-	
 	huffman_code* huffCodes;
 	
+	void deleteTree(BTreeNode* node);
 };
 
