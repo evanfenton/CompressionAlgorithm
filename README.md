@@ -1,7 +1,7 @@
 # garmin_code
-algorithm to compress an array of bytes for garmin application
+Algorithm for compressing an array of bytes.
 
-I used Huffman Coding to compress the data. Basically, I create a binary tree from the data given where each unique byte
+I used Huffman Coding to compress the data. Basically, I create a Huffman tree (binary tree) from the data given where each unique byte
 is assigned its new bit pattern based on the frequency it appears in the data. The data is represented as leaf nodes in 
 the tree (they have no child nodes). The more frequent data is higher up in the tree, while less frequent is lower. 
 
